@@ -34,14 +34,14 @@ export async function encryptSession(
    */
   const { session, secretkey } = req.params;
   const { authorization: token } = req.headers;
-  const secureTokenEnv = req.serverOptions.secretKey;
+  const secureTokenEnv = req.serverOptions.secretKey?.trim();
 
   let tokenDecrypt = '';
 
   if (secretkey === undefined) {
     tokenDecrypt = (token as string).split(' ')[0];
   } else {
-    tokenDecrypt = secretkey;
+    tokenDecrypt = secretkey.trim();
   }
 
   if (tokenDecrypt !== secureTokenEnv) {

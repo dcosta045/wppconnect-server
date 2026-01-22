@@ -50,6 +50,19 @@ export function initServer(serverOptions: Partial<ServerOptions>): {
   }
 
   serverOptions = mergeDeep({}, config, serverOptions);
+
+  // Ensure SECRET_KEY from environment variable is always used if set (override config)
+  // This ensures the env var is read at runtime, not just at module load time
+  const envSecretKey = process.env.SECRET_KEY;
+  if (envSecretKey && envSecretKey.trim()) {
+    serverOptions.secretKey = envSecretKey.trim();
+    logger.info(`Using SECRET_KEY from environment variable`);
+  } else {
+    logger.warn(
+      `SECRET_KEY environment variable not set, using default from config`
+    );
+  }
+
   defaultLogger.level = serverOptions?.log?.level
     ? serverOptions.log.level
     : 'silly';
